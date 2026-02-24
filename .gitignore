@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Extracted dependencies (generated at runtime)
+io_import_3dm/deps/_extracted/
+
+# Rhino test files (large binary)
+*.3dm
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Virtual environments
+venv/
+.venv/

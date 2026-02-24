@@ -1,0 +1,19 @@
+schema_version = "1.0.0"
+
+id = "io_import_3dm"
+version = "1.0.0"
+name = "Rhinoceros 3D Importer"
+tagline = "Import .3dm files with geometry, layers, materials, and curves"
+maintainer = "Enea Henry"
+type = "add-on"
+
+blender_version_min = "4.2.0"
+
+license = ["SPDX:MIT"]
+
+# Bundled rhino3dm wheels — Blender 4.2+ will install these automatically
+[wheels]
+# Add platform-specific wheels here after downloading:
+# "./deps/wheels/rhino3dm-8.17.0-cp311-cp311-macosx_11_0_universal2.whl"
+# "./deps/wheels/rhino3dm-8.17.0-cp311-cp311-win_amd64.whl"
+# "./deps/wheels/rhino3dm-8.17.0-cp311-cp311-manylinux_2_17_x86_64.whl"
