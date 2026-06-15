@@ -14,7 +14,7 @@ import rhino3dm
 
 
 def _transform_point(pt, scale):
-    """Rhino Y-up → Blender Z-up coordinate transform."""
+    """Y-up to Z-up: (x, y, z) → (x, -z, y)."""
     return (pt.X * scale, -pt.Z * scale, pt.Y * scale)
 
 
@@ -26,16 +26,16 @@ def _is_clamped(nc):
     """
     degree = nc.Degree
     knots = nc.Knots
-    if knots.Count < 2:
+    if len(knots) < 2:
         return True
 
     # Check start multiplicity
     start_val = knots[0]
-    start_mult = sum(1 for i in range(knots.Count) if abs(knots[i] - start_val) < 1e-10)
+    start_mult = sum(1 for i in range(len(knots)) if abs(knots[i] - start_val) < 1e-10)
 
     # Check end multiplicity
-    end_val = knots[knots.Count - 1]
-    end_mult = sum(1 for i in range(knots.Count) if abs(knots[i] - end_val) < 1e-10)
+    end_val = knots[len(knots) - 1]
+    end_mult = sum(1 for i in range(len(knots)) if abs(knots[i] - end_val) < 1e-10)
 
     return start_mult >= degree and end_mult >= degree
 
@@ -46,13 +46,30 @@ def _add_nurbs_spline(curve_data, nc, scale, warnings, name):
     pts = nc.Points
 
     # splines.new() creates 1 point by default, add the rest
-    spline.points.add(pts.Count - 1)
+    spline.points.add(len(pts) - 1)
 
-    for i in range(pts.Count):
+    for i in range(len(pts)):
         cp = pts[i]
-        x, y, z = _transform_point(cp, scale)
         w = cp.W if hasattr(cp, 'W') else 1.0
-        spline.points[i].co = (x, y, z, w)
+
+        # rhino3dm stores control points in homogeneous coordinates
+        # (X, Y, Z are pre-multiplied by W). Blender expects Euclidean
+        # coords + weight, so divide by W to get actual position.
+        if w != 0 and w != 1.0:
+            euclidean_x = cp.X / w
+            euclidean_y = cp.Y / w
+            euclidean_z = cp.Z / w
+        else:
+            euclidean_x = cp.X
+            euclidean_y = cp.Y
+            euclidean_z = cp.Z
+
+        # Apply coordinate transform and scale
+        bx = euclidean_x * scale
+        by = -euclidean_z * scale
+        bz = euclidean_y * scale
+
+        spline.points[i].co = (bx, by, bz, w)
 
     spline.order_u = nc.Degree + 1
     spline.use_cyclic_u = nc.IsClosed

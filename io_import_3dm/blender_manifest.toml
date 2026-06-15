@@ -12,8 +12,11 @@ blender_version_min = "4.2.0"
 license = ["SPDX:MIT"]
 
 # Bundled rhino3dm wheels — Blender 4.2+ will install these automatically
-[wheels]
-# Add platform-specific wheels here after downloading:
-# "./deps/wheels/rhino3dm-8.17.0-cp311-cp311-macosx_11_0_universal2.whl"
-# "./deps/wheels/rhino3dm-8.17.0-cp311-cp311-win_amd64.whl"
-# "./deps/wheels/rhino3dm-8.17.0-cp311-cp311-manylinux_2_17_x86_64.whl"
+wheels = [
+  "./wheels/rhino3dm-8.17.0-cp311-cp311-macosx_14_0_universal2.whl",
+  "./wheels/rhino3dm-8.17.0-cp312-cp312-macosx_14_0_universal2.whl",
+  "./wheels/rhino3dm-8.17.0-cp311-cp311-win_amd64.whl",
+  "./wheels/rhino3dm-8.17.0-cp312-cp312-win_amd64.whl",
+  "./wheels/rhino3dm-8.6.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+  "./wheels/rhino3dm-8.6.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+]

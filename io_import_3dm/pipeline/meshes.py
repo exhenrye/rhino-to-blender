@@ -17,10 +17,8 @@ def _transform_vertex(pt, scale):
     """
     Transform a point from Rhino coordinate system to Blender.
 
-    Rhino: X right, Y forward, Z up
-    Blender: X right, Y forward, Z up
-    But Rhino's Y/Z orientation differs from Blender's convention.
-    Transform: (x, -z, y) * scale
+    .3dm files use Y-up convention in their stored geometry.
+    Y-up to Z-up: (x, y, z) → (x, -z, y)
     """
     return (pt.X * scale, -pt.Z * scale, pt.Y * scale)
 
@@ -33,7 +31,7 @@ def _build_face_list(rh_mesh):
     index duplicated: (a, b, c, c). We detect and strip this.
     """
     faces = []
-    for i in range(rh_mesh.Faces.Count):
+    for i in range(len(rh_mesh.Faces)):
         a, b, c, d = rh_mesh.Faces[i]
         if c == d:
             faces.append((a, b, c))
@@ -96,11 +94,11 @@ def _extract_vertex_colors(rh_mesh):
     Returns:
         list of (R, G, B, A) tuples normalized to 0-1, or None
     """
-    if not hasattr(rh_mesh, 'VertexColors') or rh_mesh.VertexColors.Count == 0:
+    if not hasattr(rh_mesh, 'VertexColors') or len(rh_mesh.VertexColors) == 0:
         return None
 
     colors = []
-    for i in range(rh_mesh.VertexColors.Count):
+    for i in range(len(rh_mesh.VertexColors)):
         c = rh_mesh.VertexColors[i]
         colors.append((c.R / 255.0, c.G / 255.0, c.B / 255.0, c.A / 255.0))
     return colors
@@ -143,7 +141,7 @@ def convert_to_mesh(geometry, name, unit_scale, validate=True):
         # Vertices
         verts = [
             _transform_vertex(rm.Vertices[i], unit_scale)
-            for i in range(rm.Vertices.Count)
+            for i in range(len(rm.Vertices))
         ]
 
         # Faces
